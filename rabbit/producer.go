@@ -12,8 +12,8 @@ type Producer struct {
 	mac string
 }
 
-func NewProducer(username string, password string, mac string) (*Producer, error) {
-	connection, err := amqp.Dial(fmt.Sprintf("amqp://%s:%s@localhost:5672/", username, password))
+func NewProducer(username string, password string, host string, port string, mac string) (*Producer, error) {
+	connection, err := amqp.Dial(fmt.Sprintf("amqp://%s:%s@%s:%s/", username, password, host, port))
 	if err != nil {
 		return nil, err
 	}

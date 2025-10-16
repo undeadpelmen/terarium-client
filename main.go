@@ -3,9 +3,12 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"terarium-client/rabbit"
 	"terarium-client/sys"
 	"time"
+
+	"github.com/joho/godotenv"
 )
 
 const (
@@ -27,6 +30,14 @@ const (
 )
 
 func main() {
+	//get env
+	godotenv.Load()
+	rabbit_user := os.Getenv("RABBIT_USER")
+	rabbit_pass := os.Getenv("RABBIT_PASS")
+	rabbit_host := os.Getenv("RABBIT_HOST")
+	rabbit_port := os.Getenv("RABBIT_PORT")
+	
+	
 	//Set color prefix to console output
 	log.SetPrefix(fmt.Sprintf("%s[%s%s%s]%s ",LightBlue , LightPurple, time.Now().Format("02-01-2006 15:04"), LightBlue, LightGreen))
 	log.SetFlags(0)
@@ -43,14 +54,14 @@ func main() {
 	
 	//Init rabbit mq
 	//Create consumer
-	cons, err := rabbit.NewConsumer("guest", "guest", mac)
+	cons, err := rabbit.NewConsumer(rabbit_user, rabbit_pass, rabbit_host, rabbit_port, mac)
 	if err != nil {
 		log.Fatalf(LightRed + "Error: %v" + Reset, err)
 	}
 	defer cons.Close()
 	
 	//Create producer
-	prod, err := rabbit.NewProducer("guest", "guest", mac)
+	prod, err := rabbit.NewProducer(rabbit_user, rabbit_pass, rabbit_host, rabbit_port, mac)
 	if err != nil {
 		log.Fatalf(LightRed + "Error: %v" + Reset, err)
 	}
@@ -66,7 +77,7 @@ func main() {
 	
 	//Create queues
 	prod.NewQueue("out/" + mac)
-	prod.NewQueue("in/" + mac)
+	cons.NewQueue("in/" + mac)
 	
 	//Create chanals
 	consumed := make(chan string)

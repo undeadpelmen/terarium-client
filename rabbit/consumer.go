@@ -14,8 +14,8 @@ type Consumer struct {
 	mac string
 }
 
-func NewConsumer(username string, password string, mac string) (*Consumer, error) {
-	conn, err := amqp.Dial(fmt.Sprintf("amqp://%s:%s@localhost:5672/", username, password))
+func NewConsumer(username string, password string, host string, port string, mac string) (*Consumer, error) {
+	conn, err := amqp.Dial(fmt.Sprintf("amqp://%s:%s@%s:%s/", username, password, host, port))
 	if err != nil {
 		return nil, err
 	}
