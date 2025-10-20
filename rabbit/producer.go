@@ -34,7 +34,7 @@ func (p *Producer) NewQueue(name string) error {
 	_, err := p.chanel.QueueDeclare(
 		name,
 		true,
-		true,
+		false,
 		false,
 		false,
 		amqp.Table{

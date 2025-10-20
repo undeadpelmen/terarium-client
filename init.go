@@ -6,7 +6,7 @@ import (
 )
 
 func Init(mac string, prod *rabbit.Producer) error {
-	err := prod.NewQueue("init")
+	err := prod.NewQueue("terarium.init")
 	if err != nil {
 		return err
 	}
@@ -17,7 +17,7 @@ func Init(mac string, prod *rabbit.Producer) error {
 		Time: time.Now(),
 	}
 	
-	err = prod.Publish("", "init", mes.JSON())
+	err = prod.Publish("", "terarium.init", mes.JSON())
 	if err != nil {
 		return err
 	}

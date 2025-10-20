@@ -76,8 +76,8 @@ func main() {
 	log.Printf("Sucseesful conect to Rabbit MQ\n")
 	
 	//Create queues
-	prod.NewQueue("out/" + mac)
-	cons.NewQueue("in/" + mac)
+	prod.NewQueue("terarium.out/" + mac)
+	cons.NewQueue("terarium.in/" + mac)
 	
 	//Create chanals
 	consumed := make(chan string)
