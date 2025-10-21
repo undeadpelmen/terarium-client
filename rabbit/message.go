@@ -1,13 +1,24 @@
 package rabbit
 
-import "time"
+import (
+	"encoding/json"
+)
 
-type Mesage struct {
+type Message struct {
 	Mac string
 	Message string
-	Time time.Time
+	Time string
 }
 
-func (m *Mesage) JSON() string {
-	return `{"mac":"` + m.Mac + `","message":"` + m.Message + `","time":"` + m.Time.Format("2006-01-02 15:04:05") + `"}`
+func (m *Message) JsonToString() string {
+	data, err := json.Marshal(m)
+	if err != nil {
+		return ""
+	}
+	
+	return string(data)
+}
+
+func (m *Message) JsonFromString(jsonString string) error {
+	return json.Unmarshal([]byte(jsonString), m)
 }

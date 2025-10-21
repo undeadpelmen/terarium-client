@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"terarium-client/rabbit"
+	"terarium-client/rabbit/dto/terarium"
 	"terarium-client/sys"
 	"time"
 
@@ -75,19 +76,20 @@ func main() {
 	
 	log.Printf("Sucseesful conect to Rabbit MQ\n")
 	
-	//Create queues
-	prod.NewQueue("terarium.out/" + mac)
-	cons.NewQueue("terarium.in/" + mac)
-	
 	//Create chanals
 	consumed := make(chan string)
 	errchan  := make(chan error)
 	
+	//Create current Terarium
+	ter := &terarium.Tererarium{
+		Mac: mac,
+	}
+	
 	//Start consume gorutine
-	go Consume("in", mac, cons, consumed, errchan)
+	go Consume("terarium.in", ter, cons, consumed, errchan)
 	
 	//Start produce gorutine
-	go Produce("out", mac, prod, consumed, errchan)
+	go Produce("terarium.out", mac, prod, consumed, errchan)
 	
 	log.Printf("Waiting for messages\n")
 	

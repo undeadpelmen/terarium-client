@@ -11,13 +11,13 @@ func Init(mac string, prod *rabbit.Producer) error {
 		return err
 	}
 	
-	mes := rabbit.Mesage{
+	mes := rabbit.Message{
 		Mac: mac,
 		Message: "Terarium online",
-		Time: time.Now(),
+		Time: time.Now().Format("02-01-2006 15:04"),
 	}
 	
-	err = prod.Publish("", "terarium.init", mes.JSON())
+	err = prod.Publish("", "terarium.init", mes.JsonToString())
 	if err != nil {
 		return err
 	}
