@@ -7,6 +7,7 @@ import (
 	"terarium-client/rabbit"
 	"terarium-client/rabbit/dto/terarium"
 	"terarium-client/sys"
+	"terarium-client/rutine"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -77,7 +78,12 @@ func main() {
 	log.Printf("Sucseesful conect to Rabbit MQ\n")
 	
 	//Create chanals
-	consumed := make(chan string)
+	fromGpio := make(chan rutine.OutTerMsg)
+	toProduser := make(chan rutine.OutTerMsg)
+	
+	fromConsumer := make(chan string)
+	toGpio := make(chan string)
+	
 	errchan  := make(chan error)
 	
 	//Create current Terarium
@@ -85,17 +91,32 @@ func main() {
 		Mac: mac,
 	}
 	
+	//start gpio out gorutine
+	go rutine.GpioOut(fromGpio, errchan)
+	
 	//Start consume gorutine
-	go Consume("terarium.in", ter, cons, consumed, errchan)
+	go rutine.Consume("terarium.in", ter, cons, fromConsumer, errchan)
 	
 	//Start produce gorutine
-	go Produce("terarium.out", mac, prod, consumed, errchan)
+	go rutine.Produce("terarium.out", mac, prod, toProduser, errchan)
 	
 	log.Printf("Waiting for messages\n")
 	
-	//Error handler
+	
 	for {
-		err := <- errchan
-		log.Fatalf(LightRed + "Error: %v" + Reset, err)
+		select {
+		case message := <-  fromConsumer:
+			log.Printf("Message from Consumer: %s\n", message)
+			
+			toGpio <- message
+		
+		case  message := <-  fromGpio:
+			log.Printf("Message from Gpio: %v\n", message)
+			
+			toProduser <- message
+		
+		case err := <- errchan:
+			log.Fatalf("Fatal ERROR:\n%v", err)
+		}
 	}
 }

@@ -5,7 +5,7 @@ import (
 	"terarium-client/rabbit/dto/animal"
 )
 
-type TerariumDto struct {
+type TerariumInDto struct {
 	rabbit.Message
 	TerariumId int
 	Animal animal.Animal

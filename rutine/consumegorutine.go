@@ -1,4 +1,4 @@
-package main
+package rutine
 
 import (
 	"terarium-client/rabbit"
@@ -18,7 +18,7 @@ func Consume(queueName string, ter *terarium.Tererarium, consumer *rabbit.Consum
 	for msg := range msgs {
 		body := string(msg.Body)
 		
-		message := terarium.TerariumDto{}
+		message := terarium.TerariumInDto{}
 		err := message.JsonFromString(body)
 		if err != nil {
 			errch <- err
