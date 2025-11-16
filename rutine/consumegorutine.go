@@ -27,6 +27,8 @@ func Consume(queueName string, ter *terarium.Tererarium, consumer *rabbit.Consum
 		
 		ter.Animal = message.Animal
 		ter.Id = message.TerariumId
+		ter.Mac = message.Mac
+		ter.Name = message.Name
 		
 		outch <- message.Message.Message
 	}
